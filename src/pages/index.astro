@@ -1,0 +1,22 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import {supabase} from "@/lib/supabase";
+
+const {error} = await supabase.auth.getSession();
+const supabaseOk = error === null;
+---
+
+<BaseLayout title="rodris-dev">
+	  <main class="mx-auto flex min-h-screen max-w-3xl flex-col justify-center gap-4 px-6">
+    <h1 class="text-5xl font-bold tracking-tight">rodris-dev</h1>
+    <p class="text-lg text-zinc-600 dark:text-zinc-400">
+      Fase 1 completada: Astro 5 + TypeScript + Tailwind.
+    </p>
+    <p class="font-mono text-sm">
+      Supabase: {supabaseOk ? "conectado ✅" : "error ❌"}
+    </p>
+  </main>
+
+
+
+</BaseLayout>
