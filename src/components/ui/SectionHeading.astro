@@ -1,0 +1,20 @@
+---
+interface Props {
+  index: string;
+  eyebrow: string;
+  title: string;
+  description?: string;
+}
+const { index, eyebrow, title, description } = Astro.props;
+const tag = eyebrow.toUpperCase();
+---
+
+<div class="reveal mb-12 max-w-3xl">
+  <p class="mb-4 font-mono text-xs tracking-[0.25em] text-accent">
+    [ {index} //
+    <span class="sr-only">{tag}</span>
+    <span aria-hidden="true" data-scramble={tag}>{tag}</span> ]
+  </p>
+  <h2 class="font-display text-3xl font-bold tracking-tight sm:text-5xl">{title}</h2>
+  {description && <p class="mt-4 text-lg text-muted">{description}</p>}
+</div>

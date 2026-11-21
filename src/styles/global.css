@@ -1,8 +1,141 @@
 @import "tailwindcss";
+@import "@fontsource-variable/unbounded";
+@import "@fontsource-variable/sora";
+@import "@fontsource-variable/jetbrains-mono";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* ───────── Tokens por tema ───────── */
+:root {
+  --bg: #eef2f8;
+  --surface: rgba(255, 255, 255, 0.62);
+  --ink: #0a1020;
+  --muted: #52607a;
+  --line: rgba(10, 16, 32, 0.12);
+  --accent: #0057ff;
+  --accent-2: #00a86b;
+  --accent-ink: #ffffff;
+  --glow: rgba(0, 87, 255, 0.28);
+  --aurora-opacity: 0.2;
+}
+.dark {
+  --bg: #05070d;
+  --surface: rgba(255, 255, 255, 0.04);
+  --ink: #e8f1ff;
+  --muted: #8696b3;
+  --line: rgba(160, 200, 255, 0.14);
+  --accent: #22e4ff;
+  --accent-2: #7dff6b;
+  --accent-ink: #031018;
+  --glow: rgba(34, 228, 255, 0.32);
+  --aurora-opacity: 0.16;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-ink: var(--accent-ink);
+}
+
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, "JetBrains Mono", monospace;
+  --font-display: "Unbounded Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Sora Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  section[id] { scroll-margin-top: 6rem; }
+  body { background: var(--bg); }
+  ::selection { background: var(--accent); color: var(--accent-ink); }
+}
+
+/* ───────── Componentes visuales ───────── */
+@layer components {
+  .glass {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+
+  /* Cuadrícula técnica con desvanecido radial */
+  .bg-grid {
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 56px 56px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 100%);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 30%, #000 30%, transparent 100%);
+  }
+
+  .aurora {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(90px);
+    opacity: var(--aurora-opacity);
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .aurora-a { width: 42rem; height: 42rem; top: -12rem; left: -10rem; background: var(--accent); }
+  .aurora-b { width: 36rem; height: 36rem; top: 10rem; right: -12rem; background: var(--accent-2); animation-delay: -6s; }
+
+  .text-gradient {
+    background: linear-gradient(90deg, var(--accent), var(--accent-2), var(--accent));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: shine 6s linear infinite;
+  }
+
+  /* Foco que sigue al cursor: borde luminoso + resplandor interno */
+  .spotlight::before,
+  .spotlight::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .spotlight::before {
+    padding: 1px;
+    background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%), var(--accent), transparent 65%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  }
+  .spotlight::after {
+    background: radial-gradient(320px circle at var(--mx, 50%) var(--my, 50%), var(--glow), transparent 70%);
+  }
+  .spotlight:hover::before,
+  .spotlight:hover::after { opacity: 1; }
+
+  .marquee-track { display: flex; width: max-content; animation: marquee 32s linear infinite; }
+}
+
+/* ───────── Aparición al scroll (con retardo escalonado --d) ───────── */
+.reveal-ready .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.7s ease var(--d, 0s),
+    transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) var(--d, 0s);
+}
+.reveal-ready .reveal.is-visible { opacity: 1; transform: none; }
+
+@keyframes drift { to { transform: translate3d(60px, 40px, 0) scale(1.15); } }
+@keyframes shine { to { background-position: 200% center; } }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .aurora, .text-gradient, .marquee-track { animation: none; }
+  .reveal-ready .reveal { opacity: 1; transform: none; transition: none; }
 }

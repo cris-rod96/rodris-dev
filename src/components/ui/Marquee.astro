@@ -1,0 +1,18 @@
+---
+const stack = ["Astro 5", "TypeScript", "Tailwind CSS", "Supabase", "PostgreSQL", "Three.js", "Motion"] as const;
+---
+
+<div class="overflow-hidden border-y border-line py-4 [mask-image:linear-gradient(90deg,transparent,#000_15%,#000_85%,transparent)]">
+  <div class="marquee-track">
+    {[false, true].map((hidden) => (
+      <ul class="flex shrink-0 gap-12 pr-12 font-mono text-sm uppercase tracking-widest text-muted" aria-hidden={hidden ? "true" : undefined} aria-label={hidden ? undefined : "Tecnologías"}>
+        {stack.map((tech) => (
+          <li class="flex items-center gap-12">
+            {tech}
+            <span class="text-accent" aria-hidden="true">◆</span>
+          </li>
+        ))}
+      </ul>
+    ))}
+  </div>
+</div>

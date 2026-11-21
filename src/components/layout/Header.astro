@@ -1,0 +1,60 @@
+---
+import { Menu, X } from "@lucide/astro";
+import Button from "@/components/ui/Button.astro";
+import { navItems } from "@/data/navigation";
+
+const linkClass =
+  "relative text-sm text-muted transition-colors hover:text-ink after:absolute after:inset-x-0 after:-bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-accent after:transition-transform after:duration-300 hover:after:scale-x-100";
+---
+
+<header class="sticky top-3 z-50 px-3 sm:px-6">
+  <div class="glass mx-auto flex h-14 max-w-5xl items-center justify-between rounded-full px-5">
+    <a href="#inicio" class="font-mono text-sm font-semibold tracking-tight">
+      &lt;rodris<span class="text-accent">/</span>dev&gt;
+    </a>
+
+    <nav aria-label="Principal" class="hidden items-center gap-7 md:flex">
+      {navItems.map((item) => <a href={item.href} class={linkClass}>{item.label}</a>)}
+    </nav>
+
+    <div class="flex items-center gap-3">
+      <div class="hidden md:block">
+        <Button href="#contacto" class="!py-2">Hablemos</Button>
+      </div>
+      <button
+        id="menu-toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Abrir menú"
+        class="group grid size-9 place-items-center rounded-full border border-line md:hidden"
+      >
+        <span class="group-aria-expanded:hidden"><Menu size={18} aria-hidden="true" /></span>
+        <span class="hidden group-aria-expanded:block"><X size={18} aria-hidden="true" /></span>
+      </button>
+    </div>
+  </div>
+
+  <div id="mobile-menu" class="glass mx-auto mt-2 hidden max-w-5xl rounded-3xl p-4 md:hidden">
+    {navItems.map((item) => (
+      <a href={item.href} class="block border-b border-line/50 py-3 font-display text-xl font-semibold last:border-0">
+        {item.label}
+      </a>
+    ))}
+  </div>
+</header>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>("#menu-toggle");
+  const panel = document.querySelector<HTMLElement>("#mobile-menu");
+
+  if (btn && panel) {
+    const setOpen = (open: boolean): void => {
+      btn.setAttribute("aria-expanded", String(open));
+      panel.classList.toggle("hidden", !open);
+    };
+    btn.addEventListener("click", () => setOpen(btn.getAttribute("aria-expanded") !== "true"));
+    panel.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
+    window.addEventListener("keydown", (e) => { if (e.key === "Escape") setOpen(false); });
+  }
+</script>

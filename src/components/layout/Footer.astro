@@ -1,0 +1,11 @@
+---
+import Container from "@/components/ui/Container.astro";
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-10 border-t border-line py-10">
+  <Container class="flex flex-col gap-2 font-mono text-xs text-muted sm:flex-row sm:justify-between">
+    <p>© {year} rodris.dev</p>
+    <p><span class="text-accent-2">●</span> SYS.STATUS: OK · Astro + Tailwind + Supabase</p>
+  </Container>
+</footer>

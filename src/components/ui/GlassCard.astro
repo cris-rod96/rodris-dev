@@ -1,0 +1,12 @@
+---
+interface Props { class?: string }
+const { class: className } = Astro.props;
+---
+
+<div class:list={["spotlight glass relative rounded-2xl p-6", className]}>
+  <span aria-hidden="true" class="pointer-events-none absolute left-2.5 top-2.5 size-3 border-l border-t border-accent/70"></span>
+  <span aria-hidden="true" class="pointer-events-none absolute bottom-2.5 right-2.5 size-3 border-b border-r border-accent/70"></span>
+  <div class="relative z-10 h-full">
+    <slot />
+  </div>
+</div>

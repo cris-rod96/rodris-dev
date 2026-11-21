@@ -1,22 +1,70 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import {supabase} from "@/lib/supabase";
+import Container from "@/components/ui/Container.astro";
+import Button from "@/components/ui/Button.astro";
+import GlassCard from "@/components/ui/GlassCard.astro";
+import Marquee from "@/components/ui/Marquee.astro";
+import SectionHeading from "@/components/ui/SectionHeading.astro";
+import { navItems } from "@/data/navigation";
 
-const {error} = await supabase.auth.getSession();
-const supabaseOk = error === null;
+const pad = (n: number): string => String(n).padStart(2, "0");
 ---
 
-<BaseLayout title="rodris-dev">
-	  <main class="mx-auto flex min-h-screen max-w-3xl flex-col justify-center gap-4 px-6">
-    <h1 class="text-5xl font-bold tracking-tight">rodris-dev</h1>
-    <p class="text-lg text-zinc-600 dark:text-zinc-400">
-      Fase 1 completada: Astro 5 + TypeScript + Tailwind.
-    </p>
-    <p class="font-mono text-sm">
-      Supabase: {supabaseOk ? "conectado ✅" : "error ❌"}
-    </p>
-  </main>
+<BaseLayout title="rodris-dev | Desarrollador Full-Stack">
+  <section id="inicio" class="pb-14 pt-16 sm:pt-24">
+    <Container class="grid items-center gap-14 lg:grid-cols-[1.2fr_0.8fr]">
+      <div>
+        <p class="reveal glass mb-6 inline-flex items-center gap-2.5 rounded-full px-3.5 py-1.5 font-mono text-[11px] tracking-widest text-muted">
+          <span class="relative flex size-2">
+            <span class="absolute inline-flex size-full animate-ping rounded-full bg-accent-2 opacity-75"></span>
+            <span class="relative inline-flex size-2 rounded-full bg-accent-2"></span>
+          </span>
+          SYS.ONLINE // DISPONIBLE PARA PROYECTOS
+        </p>
 
+        <h1 class="reveal font-display text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl" style="--d:.1s">
+          Construyo experiencias web <span class="text-gradient">del futuro</span>.
+        </h1>
 
+        <p class="reveal mt-6 max-w-xl text-lg text-muted" style="--d:.2s">
+          Desarrollador Full-Stack: interfaces inmersivas, arquitectura limpia y
+          detalles que se sienten vivos.
+        </p>
 
+        <div class="reveal mt-8 flex flex-wrap gap-3" style="--d:.3s">
+          <Button href="#proyectos">Ver proyectos</Button>
+          <Button href="#contacto" variant="ghost" arrow={false}>Contactarme</Button>
+        </div>
+      </div>
+
+      <!-- Reservado: aquí vivirá el gafete interactivo (Fase 7) -->
+      <GlassCard class="reveal aspect-[3/4]">
+        <div class="grid h-full place-items-center text-center font-mono text-xs tracking-widest text-muted">
+          [ ID.CARD ]<br />gafete interactivo · fase 7
+        </div>
+      </GlassCard>
+    </Container>
+  </section>
+
+  <Marquee />
+
+  {navItems.map((item, i) => (
+    <section id={item.id} class="py-20">
+      <Container>
+        <SectionHeading
+          index={pad(i + 1)}
+          eyebrow={item.label}
+          title={item.label}
+          description="Contenido de ejemplo para validar el diseño. Lo reemplazaremos en la Fase 5."
+        />
+        <div class="grid gap-4 md:grid-cols-3">
+          {[0, 1, 2].map((n) => (
+            <GlassCard class="reveal h-44" >
+              <p class="font-mono text-xs text-muted">MODULE_{pad(n + 1)}</p>
+            </GlassCard>
+          ))}
+        </div>
+      </Container>
+    </section>
+  ))}
 </BaseLayout>
