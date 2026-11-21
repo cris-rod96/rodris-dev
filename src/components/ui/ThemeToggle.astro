@@ -1,0 +1,22 @@
+---
+import { Moon, Sun } from "@lucide/astro";
+import { getDictionary } from "@/i18n";
+import type { Locale } from "@/i18n/config";
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const t = getDictionary(lang);
+---
+
+<button
+  id="theme-toggle"
+  type="button"
+  aria-label={t.a11y.themeToDark}
+  title={t.a11y.themeToDark}
+  data-label-to-dark={t.a11y.themeToDark}
+  data-label-to-light={t.a11y.themeToLight}
+  class="glass grid size-9 place-items-center rounded-full text-muted transition-colors hover:text-accent"
+>
+  <span class="dark:hidden"><Moon size={16} aria-hidden="true" /></span>
+  <span class="hidden dark:block"><Sun size={16} aria-hidden="true" /></span>
+</button>

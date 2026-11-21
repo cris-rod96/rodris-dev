@@ -1,44 +1,96 @@
 ---
 import "@/styles/global.css";
 import Backdrop from "@/components/ui/Backdrop.astro";
+import Flashlight from "@/components/ui/Flashlight.astro";
 import Header from "@/components/layout/Header.astro";
 import Footer from "@/components/layout/Footer.astro";
+import { getDictionary } from "@/i18n";
+import type { Locale } from "@/i18n/config";
+import { THEME_STORAGE_KEY, DARK_START_HOUR, DARK_END_HOUR } from "@/utils/theme";
 
 interface Props {
-  title: string;
+  lang: Locale;
+  title?: string;
   description?: string;
 }
 
-const { title, description = "Portafolio de rodris-dev" } = Astro.props;
+const { lang, title, description } = Astro.props;
+const t = getDictionary(lang);
+const origin = (Astro.site ?? Astro.url).origin;
+const isDev = import.meta.env.DEV;
 ---
 
 <!doctype html>
-<!-- La clase "dark" es temporal: en la Fase 4 se decidirá según la hora local -->
-<html lang="es" class="dark">
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content={description} />
-    <title>{title}</title>
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content={description ?? t.meta.description} />
+    <title>{title ?? t.meta.title}</title>
+    <link rel="alternate" hreflang="es" href={`${origin}/es/`} />
+    <link rel="alternate" hreflang="en" href={`${origin}/en/`} />
+    <link rel="alternate" hreflang="x-default" href={`${origin}/`} />
+
+    <!-- Decide el tema ANTES del primer pintado. Las constantes vienen de theme.ts
+         (una sola fuente de verdad) mediante define:vars. -->
+          <script
+      is:inline
+      define:vars={{ storageKey: THEME_STORAGE_KEY, darkStart: DARK_START_HOUR, darkEnd: DARK_END_HOUR, isDev }}
+    >
+      (() => {
+        const root = document.documentElement;
+        let hour = new Date().getHours();
+        let forced = false;
+
+        if (isDev) {
+          const raw = new URLSearchParams(location.search).get("hour");
+          const n = raw === null ? NaN : Number(raw);
+          if (Number.isInteger(n) && n >= 0 && n <= 23) {
+            hour = n;
+            forced = true;
+          }
+        }
+
+        const auto = hour >= darkStart || hour < darkEnd ? "dark" : "light";
+        let theme = auto;
+
+        if (!forced) {
+          try {
+            const [chosen, autoAtSet] = (localStorage.getItem(storageKey) || "").split("|");
+            if ((chosen === "light" || chosen === "dark") && autoAtSet === auto) theme = chosen;
+          } catch {}
+        }
+
+        root.classList.toggle("dark", theme === "dark");
+        root.style.colorScheme = theme;
+      })();
+    </script>
   </head>
   <body class="font-sans text-ink antialiased">
     <a
       href="#main"
       class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-full focus:bg-accent focus:px-4 focus:py-2 focus:text-accent-ink"
     >
-      Saltar al contenido
+      {t.a11y.skipLink}
     </a>
     <Backdrop />
-    <Header />
+    <Header lang={lang} />
     <main id="main">
       <slot />
     </main>
-    <Footer />
+    <Footer lang={lang} />
+    <Flashlight />
 
     <script>
       import { scramble } from "@/utils/scramble";
       import { initSpotlight } from "@/utils/spotlight";
       import { initMagnetic } from "@/utils/magnetic";
+      import { initThemeToggle } from "@/utils/theme";
+      import { initFlashlight } from "@/utils/flashlight";
+
+      initThemeToggle();
+      initFlashlight();
 
       document.documentElement.classList.add("reveal-ready");
 

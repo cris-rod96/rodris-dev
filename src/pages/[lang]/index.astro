@@ -1,0 +1,77 @@
+---
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Container from "@/components/ui/Container.astro";
+import Button from "@/components/ui/Button.astro";
+import GlassCard from "@/components/ui/GlassCard.astro";
+import Marquee from "@/components/ui/Marquee.astro";
+import SectionHeading from "@/components/ui/SectionHeading.astro";
+import { navIds } from "@/data/navigation";
+import { getDictionary } from "@/i18n";
+import { locales, type Locale } from "@/i18n/config";
+
+export const getStaticPaths = (() =>
+  locales.map((lang) => ({ params: { lang } }))) satisfies GetStaticPaths;
+
+const lang = Astro.params.lang as Locale;
+const t = getDictionary(lang);
+const pad = (n: number): string => String(n).padStart(2, "0");
+---
+
+<BaseLayout lang={lang}>
+  <section id="home" class="pb-12 pt-14 sm:pt-20">
+    <Container class="grid items-center gap-12 lg:grid-cols-[1.2fr_0.8fr]">
+      <div>
+        <p class="reveal glass mb-6 inline-flex items-center gap-2.5 rounded-full px-3.5 py-1.5 font-mono text-[11px] tracking-widest text-muted">
+          <span class="relative flex size-2">
+            <span class="absolute inline-flex size-full animate-ping rounded-full bg-accent-2 opacity-75"></span>
+            <span class="relative inline-flex size-2 rounded-full bg-accent-2"></span>
+          </span>
+          {t.hero.status}
+        </p>
+
+        <h1 class="reveal font-display text-3xl font-semibold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl" style="--d:.1s">
+          {t.hero.titleStart} <span class="text-gradient">{t.hero.titleHighlight}</span>.
+        </h1>
+
+        <p class="reveal mt-5 max-w-lg text-base text-muted sm:text-lg" style="--d:.2s">
+          {t.hero.description}
+        </p>
+
+        <div class="reveal mt-8 flex flex-wrap gap-3" style="--d:.3s">
+          <Button href="#projects">{t.hero.ctaProjects}</Button>
+          <Button href="#contact" variant="ghost" arrow={false}>{t.hero.ctaContact}</Button>
+        </div>
+      </div>
+
+      <!-- Reservado: aquí vivirá el gafete interactivo (Fase 7) -->
+      <GlassCard class="reveal aspect-[3/4]">
+        <div class="grid h-full place-items-center text-center font-mono text-xs tracking-widest text-muted">
+          [ ID.CARD ]<br />{t.hero.cardLabel}
+        </div>
+      </GlassCard>
+    </Container>
+  </section>
+
+  <Marquee label={t.a11y.stack} />
+
+  {navIds.map((id, i) => (
+    <section id={id} class="py-16">
+      <Container>
+        <SectionHeading
+          index={pad(i + 1)}
+          eyebrow={t.nav[id]}
+          title={t.nav[id]}
+          description={t.sections.placeholder}
+        />
+        <div class="grid gap-4 md:grid-cols-3">
+          {[1, 2, 3].map((n) => (
+            <GlassCard class="reveal h-40">
+              <p class="font-mono text-xs text-muted">{t.sections.module}_{pad(n)}</p>
+            </GlassCard>
+          ))}
+        </div>
+      </Container>
+    </section>
+  ))}
+</BaseLayout>
